@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import App from "./App";
 import Home from "./pages/Home";
-import Chat from "./pages/chat";
+import Chat from "./pages/Chat";
 
 const router = createBrowserRouter([
   {
