@@ -117,7 +117,30 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* global.css or styles.css */
+::-webkit-scrollbar {
+  width: 2px;
+  
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  /* track color */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #363636;
+  /* thumb color (blue-500) */
+  border-radius: 99999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #575757;
+  /* darker blue on hover */
 }
