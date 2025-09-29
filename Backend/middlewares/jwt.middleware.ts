@@ -1,8 +1,7 @@
-import { User } from "../models/user.model";
-import { NextFunction, Request, Response } from "express";
-import jwt, { Secret } from "jsonwebtoken";
+import { User } from "../models/user.model.ts";
+import jwt from "jsonwebtoken";
 
-export default async function verifyJWT(req: Request, res: Response, next: NextFunction) {
+export default async function verifyJWT(req: any, res: any, next: Function) {
     const token = req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
     if (!token) {
         console.error("Unauthorized access: No token provided");
@@ -12,7 +11,7 @@ export default async function verifyJWT(req: Request, res: Response, next: NextF
     try {
         const decodedToken: jwt.JwtPayload = jwt.verify(
           token,
-          process.env.ACCESS_TOKEN_SECRET as Secret
+          process.env.ACCESS_TOKEN_SECRET
         ) as jwt.JwtPayload;
 
         const user = await User.findById(decodedToken._id).select("-password -refreshToken")

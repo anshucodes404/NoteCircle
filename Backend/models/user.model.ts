@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
-import jwt, { Secret, SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export interface IUser extends Document {
   username: string;
@@ -11,10 +11,11 @@ export interface IUser extends Document {
   lastName?: string;
   friends?: mongoose.Types.ObjectId[];
   refreshToken?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
   isPasswordCorrect(password: string): Promise<boolean>;
   generateAccessToken(): string;
+  generateRefreshToken(): string;
 }
 
 const userSchema: Schema = new Schema<IUser>(
@@ -23,7 +24,7 @@ const userSchema: Schema = new Schema<IUser>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     profilePicture: { type: String, default: "" },
-    firstName: { type: String, required: true },
+    firstName: { type: String},
     lastName: { type: String },
     friends: [{ type: mongoose.Types.ObjectId, ref: "User" }],
     refreshToken: {type: String, default: ""}
@@ -45,7 +46,7 @@ userSchema.methods.isPasswordCorrect = async function (
 };
 
 userSchema.methods.generateAccessToken = function (): string {
-  const secret = process.env.ACCESS_TOKEN_SECRET as Secret;
+  const secret = process.env.ACCESS_TOKEN_SECRET
   const expiresIn = process.env.ACCESS_TOKEN_EXPIRES_IN as jwt.SignOptions["expiresIn"] || "1d";
   if (!secret) {
     throw new Error("ACCESS_TOKEN_SECRET is not defined");
@@ -59,11 +60,31 @@ userSchema.methods.generateAccessToken = function (): string {
   };
 
 
-  const options: SignOptions = {
+  const options: jwt.SignOptions = {
     expiresIn: expiresIn,
   }
 
-  return jwt.sign(payload, secret as Secret, options);
+  return jwt.sign(payload, secret, options);
+};
+
+userSchema.methods.generateRefreshToken = function (): string {
+  const secret = process.env.REFRESH_TOKEN_SECRET
+  const expiresIn = process.env.REFRESH_TOKEN_EXPIRES_IN as jwt.SignOptions["expiresIn"] || "7d";
+  if (!secret) {
+    throw new Error("ACCESS_TOKEN_SECRET is not defined");
+  }
+
+
+  const payload = {
+    _id: this._id,
+  };
+
+
+  const options: jwt.SignOptions = {
+    expiresIn: expiresIn,
+  }
+
+  return jwt.sign(payload, secret, options);
 };
 
 export const User = mongoose.model<IUser>("User", userSchema);
