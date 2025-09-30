@@ -26,7 +26,7 @@ const Aside = ({friends}: {friends: string[]}) => {
               onChange={(e) => searchFriends(e)}
             />
           </div>
-          <div className="w-full flex flex-col gap-3 max-h-screen overflow-y-scroll mt-4">
+          <div className="w-full flex flex-col gap-3 max-h-[90vh] overflow-y-scroll mt-4">
             {filteredFriends.map((friend, index) => (
               <Card
                 className=" mx-2 h-14 flex justify-center cursor-pointer"

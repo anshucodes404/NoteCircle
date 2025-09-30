@@ -5,9 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router";
 import { useRef, useState } from "react";
+import { useAppDispatch } from '@/hooks';
+import { setUser } from '@/features/user/userSlice';
 
 const Login = () => {
 
+  const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const formRef = useRef<HTMLFormElement>(null)
     const url = "http://localhost:3000";
@@ -33,14 +36,15 @@ const Login = () => {
                     },
                     credentials: "include",
                     body: JSON.stringify(jsonData)
-
                 }
             )
 
             const data = await res.json()
             console.log(data)
-            console.log(data.message)
-            if (data.success) {
+          console.log(data.message)
+          console.log(data.user)
+          if (data.success) {
+              dispatch(setUser(data.user))
                 navigate("/chat")
             }
 

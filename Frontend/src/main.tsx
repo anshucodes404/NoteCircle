@@ -3,15 +3,16 @@ import './index.css'
 import { ThemeProvider } from './components/theme-provider.tsx'
 import { RouterProvider } from "react-router/dom";
 import router from './route.ts';
-import { Providers } from './components/Providers.tsx';
+import { Provider } from 'react-redux';
 import { SocketProvider } from './context/SocketProvider.tsx';
+import { store } from './store/store.ts';
 
 createRoot(document.getElementById("root")!).render(
-  <SocketProvider>
-    <Providers>
+  <Provider store={store}>
+    <SocketProvider>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <RouterProvider router={router} />
       </ThemeProvider>
-    </Providers>
-  </SocketProvider>
+    </SocketProvider>
+  </Provider>
 );
