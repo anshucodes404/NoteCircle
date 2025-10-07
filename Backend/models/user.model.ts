@@ -2,14 +2,22 @@ import mongoose, { Document, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+interface friendsData {
+  _id: string;
+  username: string;
+  profilePicture?: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface IUser extends Document {
   username: string;
   email: string;
   password: string;
   profilePicture?: string;
-  firstName?: string;
-  lastName?: string;
-  friends?: mongoose.Types.ObjectId[];
+  name: string;
+  friends?: friendsData[];
   refreshToken?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -24,8 +32,7 @@ const userSchema: Schema = new Schema<IUser>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     profilePicture: { type: String, default: "" },
-    firstName: { type: String},
-    lastName: { type: String },
+    name: { type: String},
     friends: [{ type: mongoose.Types.ObjectId, ref: "User" }],
     refreshToken: {type: String, default: ""}
   },

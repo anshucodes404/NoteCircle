@@ -81,7 +81,8 @@ console.log("refresh", refreshToken)
 
       const options = {
         httpOnly: true,
-        secure: true,
+        secure: false, // must be false for localhost (no https)
+        sameSite: "lax",
       };
 
       return res
@@ -91,4 +92,66 @@ console.log("refresh", refreshToken)
         .json({ user, message: "User logged in successfully", success: true });
 };
 
-export { registerUser, login };
+
+const searchUsers = async (req: any, res: any) => {
+  const { search } = req.query;
+  console.log(search);
+  if (!search) {
+    console.error("Search is required");
+    return res
+      .status(400)
+      .json({ success: false, message: "Username is required to Search" });
+  }
+
+  const filteredUsers = await User.find({
+    $or: [
+      { username: { $regex: search, $options: "i" } }, //these will create a query that searches all the names "or" usernames containing these regex
+      { name: { $regex: search, $options: "i" } },
+    ],
+  }).select("-password -refreshToken -email -friends -__v");
+
+  if (!filteredUsers) {
+    console.error("No Users matches");
+    return res
+      .status(400)
+      .json({ success: false, message: "No Users matched" });
+  }
+
+  return res
+    .status(200)
+    .json({
+      users: filteredUsers,
+      success: true,
+      message: "Users fetched successfully",
+    });
+}; 
+
+
+const userInfo = async (req: any, res: any) => {
+  console.log(req.user)
+  const userDetails = req.user
+  console.log(userDetails)
+
+  if (!userDetails) {
+    console.error("User not found")
+    return res.status(400).json({success: false, message: "User not found"})
+  }
+
+  const user = await User.findById(userDetails._id).select("-password -refreshToken")
+
+  if (!user) {
+    console.error("Error while searching User details")
+    return res
+      .status(500)
+      .json({ success: false, message: "Error while searching User details" });
+  }
+
+    return res
+      .status(200)
+      .json({
+        user,
+        success: true,
+        message: "User Details fetched successfully",
+      });
+}
+export { registerUser, login, searchUsers, userInfo };

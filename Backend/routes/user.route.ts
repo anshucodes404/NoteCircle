@@ -1,6 +1,11 @@
 import { Router } from "express";
 import verifyJWT from "../middlewares/jwt.middleware.ts";
-import { login, registerUser } from "../controllers/user.controller.ts";
+import {
+  login,
+  registerUser,
+  searchUsers,
+  userInfo,
+} from "../controllers/user.controller.ts";
 
 const userRouter = Router()
 
@@ -8,6 +13,8 @@ const userRouter = Router()
 
 userRouter.route("/signup").post(registerUser)
 userRouter.route("/login").post(login)
+userRouter.route("/search").get(verifyJWT, searchUsers)
+userRouter.route("/userInfo").get(verifyJWT, userInfo)
 
 
 export default userRouter

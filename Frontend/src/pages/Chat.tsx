@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSocket } from "@/context/SocketProvider";
 import {
   ResizableHandle,
@@ -8,31 +8,44 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import React from "react";
-import { useAppSelector } from "@/hooks";
+import { useAppSelector, useAppDispatch } from "@/hooks";
 
 import Aside from "@/components/Aside";
 import ChatNav from "@/components/ChatNav";
-import { selectUser } from "@/features/user/userSlice";
-
+import { selectUser, setUser } from "@/features/user/userSlice";
 const Chat = () => {
+  const url = "http://localhost:3000"
+  const dispatch = useAppDispatch()
+
+  const getUserDetails = async () => {
+        console.log("Data fetching");
+    const res = await fetch(`${url}/api/v1/user/userInfo`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const data = await res.json();
+    console.log("Data fetching")
+    console.log(data.message)
+    console.log(data.user);
+    dispatch(setUser(data.user));
+
+  };
+
+
+  useEffect(() => {
+    console.log("Useeffect is running")
+    getUserDetails();
+  }, [])
+
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<string[]>([]);
+
+  
+
   const user = useAppSelector(selectUser)
 
   const { sendMessage } = useSocket();
-  const friends = [
-    "alex123",
-    "john_doe",
-    "mary99",
-    "coder_ash",
-    "sophia_k",
-    "dev_master",
-    "anuj45",
-    "tech_girl",
-    "rahul007",
-    "neha_dev",
-    "bjhdvsdf",
-  ];
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +59,7 @@ const Chat = () => {
     <>
       <ResizablePanelGroup direction="horizontal" className="max-h-screen">
         <ResizablePanel className="max-w-1/2 min-w-1/4">
-          <Aside friends={friends} />
+          <Aside />
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel>
