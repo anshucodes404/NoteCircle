@@ -13,7 +13,7 @@ const Aside = () => {
   const [filteredFriends, setFilteredFriends] = useState<string[]>(friends);
   const [searchOnChatify, setSearchOnChatify] = useState<boolean>(false);
   const url = "http://localhost:3000";
-  const [searchedUsers, setSearchedUsers] = useState<>(null)
+  const [searchedUsers, setSearchedUsers] = useState<string[] | null>(null)
   
 
   const searchPeople = async () => {
